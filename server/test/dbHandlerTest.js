@@ -191,7 +191,7 @@ describe("Database Handler", function () {
         });
 
         it("getById should return no ad for an incorrect id", function (done) {
-            db.getById("3", function (values) {
+            db.getById("4edd40c86762e0fb12000009", function (values) {
                 assert.equal(values.length, 0);
 
                 done();
