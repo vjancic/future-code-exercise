@@ -107,7 +107,7 @@ describe("Database Handler", function () {
         it("getByUser should return one ad from Saša", function (done) {
             db.getByUser("1", function (values) {
                 assert.equal(values.length, 1);
-                assert.equal(values[2].id, "4edd40c86762e0fb12000002");
+                assert.equal(values[0].id, "4edd40c86762e0fb12000002");
 
                 done();
             });
