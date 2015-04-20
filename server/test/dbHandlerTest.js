@@ -76,7 +76,7 @@ describe("Database Handler", function () {
         });
 
         it("getAll should return everything from the Ad table", function (done) {
-            db.getAll(function (values) {
+            db.getAll(function (err, values) {
                 assert.equal(values.length, 3);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000000");
                 assert.equal(values[1].id, "4edd40c86762e0fb12000001");
@@ -95,7 +95,7 @@ describe("Database Handler", function () {
         });
 
         it("getByUser should return two ads from Vedran", function (done) {
-            db.getByUser("0", function (values) {
+            db.getByUser("0", function (err, values) {
                 assert.equal(values.length, 2);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000000");
                 assert.equal(values[1].id, "4edd40c86762e0fb12000001");
@@ -105,7 +105,7 @@ describe("Database Handler", function () {
         });
 
         it("getByUser should return one ad from Saša", function (done) {
-            db.getByUser("1", function (values) {
+            db.getByUser("1", function (err, values) {
                 assert.equal(values.length, 1);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000002");
 
@@ -114,7 +114,7 @@ describe("Database Handler", function () {
         });
 
         it("getByUser should return no ads for an incorrect UserId", function (done) {
-            db.getByUser("3", function (values) {
+            db.getByUser("3", function (err, values) {
                 assert.equal(values.length, 0);
 
                 done();
@@ -130,7 +130,7 @@ describe("Database Handler", function () {
         });
 
         it("getByLocation should return everything from the Ad table for Zagreb location", function (done) {
-            db.getByLocation("Zagreb", function (values) {
+            db.getByLocation("Zagreb", function (err, values) {
                 assert.equal(values.length, 3);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000000");
                 assert.equal(values[1].id, "4edd40c86762e0fb12000001");
@@ -141,7 +141,7 @@ describe("Database Handler", function () {
         });
 
         it("getByLocation should return nothing from the Ad table if there is nothing in the given location", function (done) {
-            db.getByLocation("Vukovar", function (values) {
+            db.getByLocation("Vukovar", function (err, values) {
                 assert.equal(values.length, 0);
 
                 done();
@@ -157,7 +157,7 @@ describe("Database Handler", function () {
         });
 
         it("getByTag should return one ad for the cooking ad", function (done) {
-            db.getByTag("cooking", function (values) {
+            db.getByTag("cooking", function (err, values) {
                 assert.equal(values.length, 1);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000002");
 
@@ -166,7 +166,7 @@ describe("Database Handler", function () {
         });
 
         it("getByTag should return no ad for the C# ad", function (done) {
-            db.getByTag("C#", function (values) {
+            db.getByTag("C#", function (err, values) {
                 assert.equal(values.length, 0);
 
                 done();
@@ -182,7 +182,7 @@ describe("Database Handler", function () {
         });
 
         it("getById should return only one ad for the correct id", function (done) {
-            db.getById("4edd40c86762e0fb12000000", function (values) {
+            db.getById("4edd40c86762e0fb12000000", function (err, values) {
                 assert.equal(values.length, 1);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000000");
 
@@ -191,7 +191,7 @@ describe("Database Handler", function () {
         });
 
         it("getById should return no ad for an incorrect id", function (done) {
-            db.getById("4edd40c86762e0fb12000009", function (values) {
+            db.getById("4edd40c86762e0fb12000009", function (err, values) {
                 assert.equal(values.length, 0);
 
                 done();
