@@ -24,7 +24,7 @@ var assert = require("assert"),
             body: "JavaScript developer is looking for a mentor to mentor me in Javascript projects",
             location: "Zagreb",
             expiry: 0,
-            date: new Date().getTime(),
+            date: new Date().getTime() + 20 * 1000,
             type: "request",
             tags: "tutoring, JavaScript"
         },
@@ -33,9 +33,9 @@ var assert = require("assert"),
             user: { id: "1", name: "Saša" },
             headline: "Giving cooking lessons",
             body: "Skilled developer is giving free cooking lessons",
-            location: "Zagreb",
-            expiry: 0,
-            date: new Date().getTime(),
+            location: "Gomirje",
+            expiry: new Date().getTime() + 3 * 24 * 60 * 60 * 1000,
+            date: new Date().getTime() + 10 * 1000,
             type: "offer",
             tags: "cooking"
         }
@@ -58,13 +58,17 @@ describe("Database Handler", function () {
     });
 
     after(function (done) {
-        AdDB.remove(function (err) {
-            if (err) {
-                console.log('Error: %s', err);
-            }
+        ads.forEach(function (ad) {
+            AdDB.remove({_id: mongoose.Types.ObjectId(ad._id)}, function (err) {
+                if (err) {
+                    console.log('Error: %s', err);
+                }
 
-            mongoose.disconnect();
-            done();
+                if (ad._id === ads[ads.length - 1]._id) {
+                    mongoose.disconnect();
+                    done();
+                }
+            });
         });
     });
 
@@ -131,10 +135,9 @@ describe("Database Handler", function () {
 
         it("getByLocation should return everything from the Ad table for Zagreb location", function (done) {
             db.getByLocation("Zagreb", function (err, values) {
-                assert.equal(values.length, 3);
+                assert.equal(values.length, 2);
                 assert.equal(values[0].id, "4edd40c86762e0fb12000000");
                 assert.equal(values[1].id, "4edd40c86762e0fb12000001");
-                assert.equal(values[2].id, "4edd40c86762e0fb12000002");
 
                 done();
             });
