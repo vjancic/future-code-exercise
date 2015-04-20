@@ -1,0 +1,50 @@
+<style type="text/css" scoped="scoped">
+    div.request {
+		background: #FFB2B2;
+		color: #000000;
+	}
+
+	div.offer {
+        background: #FFFFCC;
+		color: #000000;
+	}
+
+    div.request a, div.offer a {
+        color: #FFD27F;
+    }
+</style>
+
+<div class="panel-heading">
+	<form class="form-inline">
+		<div class="form-group">
+			<label for="sortSelect" >Sort by:</label>
+			<select id="sortSelect" data-ng-init="data.sortSelection = 0" data-ng-model="data.sortSelection" data-ng-change="selectionChange()">
+				<option value="0">Date created descending</option>
+				<option value="1">Date created ascending</option>
+				<option value="2">Date of expiry ascending</option>
+				<option value="3">Date of expiry descending</option>
+			</select>
+            <label for="filterSelect" >Select location:</label>
+			<select id="filterSelect" data-ng-init="data.filterSelection = 'All'" data-ng-model="data.filterSelection" data-ng-change="filterChange()">
+				<option value="All">All</option>
+                <option value="{{location}}" data-ng-repeat="location in data.locations">{{location}}</option>
+			</select>
+		</div>
+	</form>
+</div>
+<div class="panel panel-default" data-ng-repeat="ad in data.ads">
+    <div class="panel-heading clearfix">
+		<h4 class="panel-title pull-left" style="padding-top: 7.5px;">[{{ ad.type | uppercase}}] {{ad.headline}}</h4>
+		<div class="btn-group pull-right">
+        	<a href="#/ad/{{ad._id}}" class="btn btn-default btn-sm">More</a>
+      </div>
+	</div>
+    <div class="panel-body {{ad.type}}">
+		<h6>Location: <a href="#/ads/location/{{ad.location}}">{{ad.location}}</a></h6>
+		<p/>
+        <h6>Ad created: {{ad.date | date:'dd-MM-yyyy HH:mm:ss'}}</a></h6>
+		<p/>
+		<h6 data-ng-if="ad.expiry === 0">Expires: never</h6>
+        <h6 data-ng-if="ad.expiry > 0">Expires: {{ad.expiry | date:'dd-MM-yyyy HH:mm:ss'}}</h6>
+    </div>
+</div>
