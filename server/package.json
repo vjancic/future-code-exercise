@@ -1,0 +1,20 @@
+{
+  "name": "future-code-excercise-0-server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.12.3",
+    "mongoose": "^4.0.1",
+    "express": "^4.12.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Vedran Jancic <vedran.jancic@gmail.com>",
+  "license": "MIT"
+}
