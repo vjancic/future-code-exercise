@@ -3,7 +3,7 @@
 (function (define, angular, document) {
     'use strict';
 
-    define(['ctl/ads'], function () {
+    define(['ctl/ads', 'ctl/ad'], function () {
         var app = angular.module('app');
         app.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -18,9 +18,7 @@
             $stateProvider.state('view', {
                 url: '/ad/:id',
                 templateUrl: 'templates/view.html',
-                controller: function ($log) {
-                    $log.log('Show ad!');
-                }
+                controller: 'adController'
             });
 
 			$stateProvider.state('search', {
