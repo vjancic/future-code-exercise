@@ -7,9 +7,9 @@ var mongoose = require('mongoose'),
     SALT_BYTE_SIZE = 24,
     HASH_BYTE_SIZE = 24,
     PBKDF2_ITERATIONS = 50000,
-    ITERATION_INDEX = 0,
-    SALT_INDEX = 1,
-    PBKDF2_INDEX = 2;
+    SALT_INDEX = 0,
+    ITERATION_INDEX = 1,
+    HASH_INDEX = 2;
 
 function calculateHash(password, salt, iterations, length, callback) {
     crypto.pbkdf2(password, salt, iterations, length, function (err, hash) {
@@ -18,7 +18,12 @@ function calculateHash(password, salt, iterations, length, callback) {
             return;
         }
 
-        callback(null, salt + ':' + iterations + ':' + hash.toString('hex'));
+        var fullHash = [];
+        fullHash[SALT_INDEX] = salt;
+        fullHash[ITERATION_INDEX] = iterations;
+        fullHash[HASH_INDEX] = hash.toString('hex');
+
+        callback(null, fullHash.join(':'));
     });
 }
 
@@ -81,9 +86,9 @@ function isValidUser(email, password, callback) {
         }
 
         var split = user.password.split(':'),
-            salt = split[0],
-            iterations = split[1],
-            correctHash = split[2];
+            salt = split[SALT_INDEX],
+            iterations = split[ITERATION_INDEX],
+            correctHash = split[HASH_INDEX];
 
         calculateHash(password, salt, iterations, correctHash.length, function (err, hash) {
             if (err) {
@@ -91,7 +96,7 @@ function isValidUser(email, password, callback) {
                 return;
             }
 
-            callback(null, slowEquals(hash.split(':')[2], correctHash));
+            callback(null, slowEquals(hash.split(':')[HASH_INDEX], correctHash));
         });
     });
 }
