@@ -2,8 +2,13 @@
 
 var mongoose = require('mongoose'),
     schema =  new mongoose.Schema({
+        email: {
+            type: String,
+            unique: true,
+            index: true
+        },
         name: String,
-        email: String,
+        password: String,
         score: Number,
         count: Number
     });
