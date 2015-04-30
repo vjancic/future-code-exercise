@@ -3,13 +3,22 @@
 
 var mongoose = require('mongoose'),
     crypto = require('crypto'),
-    UserDb = require('../models/ad.js'),
+    UserDb = require('../models/user.js'),
+    Token = require('../models/token.js'),
     SALT_BYTE_SIZE = 24,
     HASH_BYTE_SIZE = 24,
     PBKDF2_ITERATIONS = 50000,
     SALT_INDEX = 0,
     ITERATION_INDEX = 1,
     HASH_INDEX = 2;
+
+/**
+* function generateToken returns the newly generated token/salt
+* @return String generated token/salt
+*/
+function generateToken() {
+    return crypto.randomBytes(SALT_BYTE_SIZE).toString('hex');
+}
 
 /**
 * function calculateHash calculates the PBKDF2 hash for the given
@@ -55,15 +64,7 @@ function createHash(password, callback) {
         throw new Error("Password not a string!");
     }
 
-    // generate random salt and calculate the hash
-    crypto.randomBytes(SALT_BYTE_SIZE, function (err, salt) {
-        if (err) {
-            callback(err, null);
-            return;
-        }
-
-        calculateHash(password, salt.toString('hex'), PBKDF2_ITERATIONS, HASH_BYTE_SIZE, callback);
-    });
+    calculateHash(password, generateToken(), PBKDF2_ITERATIONS, HASH_BYTE_SIZE, callback);
 }
 
 /**
@@ -91,14 +92,61 @@ function slowEquals(hash1, hash2) {
 }
 
 /**
-* function isValidUser validates the user. It searches for the given user
+* function login checks for user validity,
+* creates a token and returns it back to the user
+* @param String userId
+* @param Function callback - return the token
+*/
+function login(userId, callback) {
+    if (userId instanceof Function) {
+        throw new Error("No userId given!");
+    }
+
+    if (!(callback instanceof Function)) {
+        throw new Error("No callback given!");
+    }
+
+    UserDb.findOne({ _id: mongoose.Types.ObjectId(userId) }, function (err, user) {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+
+        if (!user) {
+            callback(new Error("user not found!"), null);
+            return;
+        }
+
+        Token.findOne({ userId: userId }, function (err, token) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+
+            var newToken = generateToken();
+            callback(null, newToken);
+
+            // token does not yet exist, create it
+            if(!token) {
+                return new Token({ token: newToken, userId: userId }).save();
+            }
+
+            // update the token
+            token.token = generateToken();
+            token.save();
+        });
+    });
+}
+
+/**
+* function authenticateUser validates the user. It searches for the given user
 * in the database then compares the password hash from the database
 * to the one given
 * @param String email
 * @param String password
-* @param Function callback - return the boolean true if the user is valid, false if not
+* @param Function callback - return the token or an error
 */
-function isValidUser(email, password, callback) {
+function authenticateUser(email, password, callback) {
     if (email instanceof Function) {
         throw new Error("No email given!");
     }
@@ -127,7 +175,8 @@ function isValidUser(email, password, callback) {
         var split = user.password.split(':'),
             salt = split[SALT_INDEX],
             iterations = split[ITERATION_INDEX],
-            correctHash = split[HASH_INDEX];
+            correctHash = split[HASH_INDEX],
+            isValidUser;
 
         // calculate the password hash using the same parameters
         // used to create the correct hash and return boolean indicating
@@ -138,7 +187,15 @@ function isValidUser(email, password, callback) {
                 return;
             }
 
-            callback(null, slowEquals(hash.split(':')[HASH_INDEX], correctHash));
+            isValidUser = slowEquals(hash.split(':')[HASH_INDEX], correctHash);
+
+            if (!isValidUser) {
+                callback(new Error("Incorrect username or password!"), null);
+                return;
+            }
+
+            // log the user in
+            login(user._id, callback);
         });
     });
 }
@@ -188,10 +245,11 @@ function createUser(email, name, password, callback) {
                 return;
             }
 
-            callback(null, { id: newUser._id, email: email, name: name });
+            // log the user in
+            login(newUser._id, callback);
         });
     });
 }
 
-module.exports.isValidUser = isValidUser;
+module.exports.authenticateUser = authenticateUser;
 module.exports.createUser = createUser;
