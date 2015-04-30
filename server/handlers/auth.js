@@ -53,15 +53,15 @@ function calculateHash(password, salt, iterations, length, callback) {
 */
 function createHash(password, callback) {
     if (password instanceof Function) {
-        throw new Error("No password given!");
+        return new Error("No password given!");
     }
 
     if (!(callback instanceof Function)) {
-        throw new Error("No callback given!");
+        return new Error("No callback given!");
     }
 
     if (typeof password !== 'string') {
-        throw new Error("Password not a string!");
+        return new Error("Password not a string!");
     }
 
     calculateHash(password, generateToken(), PBKDF2_ITERATIONS, HASH_BYTE_SIZE, callback);
@@ -99,11 +99,11 @@ function slowEquals(hash1, hash2) {
 */
 function login(userId, callback) {
     if (userId instanceof Function) {
-        throw new Error("No userId given!");
+        return new Error("No userId given!");
     }
 
     if (!(callback instanceof Function)) {
-        throw new Error("No callback given!");
+        return new Error("No callback given!");
     }
 
     UserDb.findOne({ _id: mongoose.Types.ObjectId(userId) }, function (err, user) {
@@ -127,7 +127,7 @@ function login(userId, callback) {
             callback(null, newToken);
 
             // token does not yet exist, create it
-            if(!token) {
+            if (!token) {
                 return new Token({ token: newToken, userId: userId }).save();
             }
 
@@ -148,15 +148,15 @@ function login(userId, callback) {
 */
 function authenticateUser(email, password, callback) {
     if (email instanceof Function) {
-        throw new Error("No email given!");
+        return new Error("No email given!");
     }
 
     if (password instanceof Function) {
-        throw new Error("No password given!");
+        return new Error("No password given!");
     }
 
     if (!(callback instanceof Function)) {
-        throw new Error("No callback given !");
+        return new Error("No callback given !");
     }
 
     UserDb.findOne({ email: email }, function (err, user) {
@@ -210,19 +210,19 @@ function authenticateUser(email, password, callback) {
 */
 function createUser(email, name, password, callback) {
     if (email instanceof Function) {
-        throw new Error("No email given!");
+        return new Error("No email given!");
     }
 
     if (password instanceof Function) {
-        throw new Error("No password given!");
+        return new Error("No password given!");
     }
 
     if (name instanceof Function) {
-        throw new Error("No name given!");
+        return new Error("No name given!");
     }
 
     if (!(callback instanceof Function)) {
-        throw new Error("No callback given!");
+        return new Error("No callback given!");
     }
 
     createHash(password, function (err, hash) {
@@ -251,5 +251,35 @@ function createUser(email, name, password, callback) {
     });
 }
 
+/**
+* function isLoggedIn checks if the token exists
+* @param String token
+* @param Function callback - return true if the token exists
+*/
+function isLoggedIn(token, callback) {
+    if (token instanceof Function) {
+        return new Error("No token given!");
+    }
+
+    if (!(callback instanceof Function)) {
+        return new Error("No callback given!");
+    }
+
+    Token.findOne({ token: token }, function (err, token) {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+
+        // token does not exist
+        if (!token) {
+            callback(null, false);
+        } else {
+            callback(null, true);
+        }
+    });
+}
+
 module.exports.authenticateUser = authenticateUser;
 module.exports.createUser = createUser;
+module.exports.isLoggedIn = isLoggedIn;
