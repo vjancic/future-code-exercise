@@ -1,7 +1,8 @@
 /*jslint node: true, nomen: true, todo:true*/
 'use strict';
 
-var db = require('./db.js');
+var db = require('./db.js'),
+    auth = require('./auth.js');
 
 // TODO: verify ad!!!!! DO NOT USE THIS!!!!!
 function saveAd(req, res) {
@@ -74,6 +75,20 @@ function getByTag(req, res) {
     });
 }
 
+function authenticate(req, res) {
+    var ret = auth.authenticateUser(req.body.email, req.body.password, function (err, values) {
+        if (err) {
+            res.sendStatus(401);
+        } else {
+            res.json(values);
+        }
+    });
+
+    if (ret) {
+        res.sendStatus(401);
+    }
+}
+
 module.exports.saveAd = saveAd;
 module.exports.removeAd = removeAd;
 module.exports.getAll = getAll;
@@ -81,3 +96,5 @@ module.exports.getByUser = getByUser;
 module.exports.getByLocation = getByLocation;
 module.exports.getByTag = getByTag;
 module.exports.getById = getById;
+
+module.exports.authenticate = authenticate;

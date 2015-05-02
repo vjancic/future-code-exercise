@@ -41,6 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', express.static(__dirname + '/../client/'));
 
 app.post('/ad', routes.saveAd);
+app.post('/authenticate', routes.authenticate);
 app.get('/ad', routes.getAll);
 app.get('/ad/:id', routes.getById);
 app.get('/ad/user/:id', routes.getByUser);
