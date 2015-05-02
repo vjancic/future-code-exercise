@@ -3,7 +3,7 @@
 (function (define, angular, document) {
     'use strict';
 
-    define(['ctl/ads', 'ctl/ad'], function () {
+    define(['ctl/ads', 'ctl/ad', 'ctl/auth'], function () {
         var app = angular.module('app');
         app.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -25,6 +25,12 @@
                 url: '/ads/:action/:id',
                 templateUrl: 'templates/main.html',
                 controller: 'adsController'
+            });
+
+            $stateProvider.state('login', {
+                url: '/login',
+                templateUrl: 'templates/login.html',
+                controller: 'loginController'
             });
         });
 
