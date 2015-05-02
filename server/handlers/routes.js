@@ -78,28 +78,28 @@ function getByTag(req, res) {
 function authenticate(req, res) {
     var ret = auth.authenticateUser(req.body.email, req.body.password, function (err, values) {
         if (err) {
-            res.sendStatus(401);
+            res.status(401).send(err.message);
         } else {
             res.json(values);
         }
     });
 
     if (ret) {
-        res.sendStatus(401);
+        res.status(401).send(ret.message);
     }
 }
 
 function register(req, res) {
     var ret = auth.createUser(req.body.email, req.body.name, req.body.password, function (err, values) {
         if (err) {
-            res.sendStatus(400);
+            res.status(400).send(err.message);
         } else {
             res.json(values);
         }
     });
 
     if (ret) {
-        res.sendStatus(400);
+        res.status(400).send(ret.message);
     }
 }
 
