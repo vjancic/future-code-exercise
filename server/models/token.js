@@ -11,7 +11,8 @@ var mongoose = require('mongoose'),
             type: String,
             unique: true,
             index: true
-        }
+        },
+        expires: Number
     });
 
 module.exports = mongoose.model('Token', schema);
