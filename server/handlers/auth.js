@@ -30,7 +30,7 @@ function generateToken() {
 * @param Function callback - callback when the hash is calculated
 */
 function calculateHash(password, salt, iterations, length, callback) {
-    crypto.pbkdf2(password, salt, iterations, length, function (err, hash) {
+    crypto.pbkdf2(password, salt, Number(iterations), length, function (err, hash) {
         if (err) {
             callback(err, null);
             return;
@@ -181,7 +181,7 @@ function authenticateUser(email, password, callback) {
         // calculate the password hash using the same parameters
         // used to create the correct hash and return boolean indicating
         // wether the hashes are equal
-        calculateHash(password, salt, iterations, correctHash.length, function (err, hash) {
+        calculateHash(password, salt, iterations, correctHash.length / 2, function (err, hash) {
             if (err) {
                 callback(err, null);
                 return;

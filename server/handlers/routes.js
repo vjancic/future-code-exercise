@@ -89,6 +89,20 @@ function authenticate(req, res) {
     }
 }
 
+function register(req, res) {
+    var ret = auth.createUser(req.body.email, req.body.name, req.body.password, function (err, values) {
+        if (err) {
+            res.sendStatus(400);
+        } else {
+            res.json(values);
+        }
+    });
+
+    if (ret) {
+        res.sendStatus(400);
+    }
+}
+
 module.exports.saveAd = saveAd;
 module.exports.removeAd = removeAd;
 module.exports.getAll = getAll;
@@ -98,3 +112,4 @@ module.exports.getByTag = getByTag;
 module.exports.getById = getById;
 
 module.exports.authenticate = authenticate;
+module.exports.register = register;

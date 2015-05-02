@@ -42,6 +42,7 @@ app.use('/', express.static(__dirname + '/../client/'));
 
 app.post('/ad', routes.saveAd);
 app.post('/authenticate', routes.authenticate);
+app.post('/register', routes.register);
 app.get('/ad', routes.getAll);
 app.get('/ad/:id', routes.getById);
 app.get('/ad/user/:id', routes.getByUser);
