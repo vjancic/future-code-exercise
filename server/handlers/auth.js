@@ -147,11 +147,11 @@ function login(userId, callback) {
 * @param Function callback - return the token or an error
 */
 function authenticateUser(email, password, callback) {
-    if (email instanceof Function) {
+    if (email instanceof Function || typeof email !== 'string') {
         return new Error("No email given!");
     }
 
-    if (password instanceof Function) {
+    if (password instanceof Function || typeof password !== 'string') {
         return new Error("No password given!");
     }
 
@@ -166,7 +166,7 @@ function authenticateUser(email, password, callback) {
         }
 
         if (!user) {
-            callback(null, false);
+            callback(new Error("Incorrect username or password!"), null);
             return;
         }
 
@@ -209,15 +209,15 @@ function authenticateUser(email, password, callback) {
 * @param Function callback - return the newly created user
 */
 function createUser(email, name, password, callback) {
-    if (email instanceof Function) {
+    if (email instanceof Function || typeof email !== 'string') {
         return new Error("No email given!");
     }
 
-    if (password instanceof Function) {
+    if (password instanceof Function || typeof password !== 'string') {
         return new Error("No password given!");
     }
 
-    if (name instanceof Function) {
+    if (name instanceof Function || typeof name !== 'string') {
         return new Error("No name given!");
     }
 
