@@ -2,9 +2,11 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-    AdDB = require("../models/ad.js");
+    AdDB = require("../models/ad.js"),
+    UserDb = require('../models/user.js'),
+    Token = require('../models/token.js');
 
-function saveAd(ad, projectionFunction) {
+function saveAd(ad, token, projectionFunction) {
     if (ad instanceof Function) {
         throw new Error("No ad given!");
     }
@@ -17,14 +19,47 @@ function saveAd(ad, projectionFunction) {
         throw new Error("Ad is not an object!");
     }
 
-    // TODO: validate AD!!!
-    new AdDB(ad).save(function (err, newAd) {
+    if (!ad.headline || !ad.body || !ad.location) {
+        return projectionFunction(new Error("Required fields were empty!"), null);
+    }
+
+    var data = {};
+    data.headline = ad.headline;
+    data.body = ad.body;
+    data.location = ad.location;
+    data.expiry = ad.expiry || 0;
+    data.expiry = new Date().getTime() + data.expiry * 24 * 60 * 60 * 1000;
+    data.date = new Date().getTime();
+    data.type = ad.type;
+    data.tags = ad.tags || "";
+    data.user = {};
+
+    Token.findOne({ token: token }, function (err, dbToken) {
         if (err) {
-            // TODO: better error loging!!!
-            console.error(err);
+            projectionFunction(err, null);
+            return;
         }
 
-        projectionFunction(err, newAd._id);
+        if (dbToken) {
+            UserDb.findOne({ _id: mongoose.Types.ObjectId(dbToken.userId) }, function (err, user) {
+                if (err) {
+                    projectionFunction(err, null);
+                    return;
+                }
+
+                data.user.id = user._id;
+                data.user.name = user.name;
+
+                new AdDB(data).save(function (err, newAd) {
+                    if (err) {
+                        // TODO: better error loging!!!
+                        console.error(err);
+                    }
+
+                    projectionFunction(err, newAd._id);
+                });
+            });
+        }
     });
 }
 
