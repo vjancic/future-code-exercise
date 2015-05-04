@@ -1,0 +1,64 @@
+<div class="container">
+    <div id="postbox" style="margin-top:50px;" class="mainbox">
+        <div class="panel panel-info" >
+            <div class="panel-heading">
+                <div class="panel-title">New Ad</div>
+            </div>
+
+            <div style="padding-top:30px" class="panel-body" >
+
+                <div data-ng-show="post.error" id="post-alert" class="alert alert-danger col-sm-12" data-ng-click="post.error = false"> {{post.message}} </div>
+
+                <form id="postform" class="form-horizontal" role="form" data-ng-submit="post.submit()">
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">Headline</span>
+                        <input id="post-headline" type="text" class="form-control" name="headline" data-ng-model="post.head" placeholder="Headline" required>
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">Location</span>
+                        <input id="post-location" type="text" class="form-control" name="location" data-ng-model="post.location" placeholder="Location" required>
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">Tags</span>
+                        <input id="post-tags" type="text" class="form-control" name="tags" data-ng-model="post.tags" placeholder="Tags">
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">Expiry</span>
+                        <input id="post-tags" type="number" class="form-control" name="expiry" data-ng-model="post.expiry" placeholder="Days till the ad expires (0 - never expires)">
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">
+                            <input type="radio" name="post" data-ng-model="post.type" value="offer"/>
+                        </span>
+                        <input type="text" class="form-control" value="Offer" readonly>
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+						<span class="input-group-addon">
+							<input type="radio" name="post" data-ng-model="post.type" value="request" />
+						</span>
+						<input type="text" class="form-control" value="Request" readonly>
+                    </div>
+
+                    <div style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon">Message</span>
+                        <textarea id="post-body" rows="7" class="form-control" name="body" data-ng-model="post.body" placeholder="Message" required></textarea>
+                    </div>
+
+                    <div style="margin-top:10px" class="form-group">
+                            <!-- Button -->
+
+                        <div class="col-sm-12 controls">
+                          <button id="btn-post" type="submit" class="btn btn-success btn-small">Post</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
