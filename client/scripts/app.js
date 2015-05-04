@@ -13,14 +13,16 @@
             bootstrap: 'resources/ui-bootstrap.min',
             animate: 'resources/angular-animate.min',
             'underscore-min': 'resources/underscore-min',
-            router: 'controls/router'
+            router: 'controls/router',
+            auth: 'services/auth'
         },
         shim: {
             angular: { deps: ['underscore-min'], exports: 'angular' },
             bootstrap: ['angular'],
             animate: ['angular'],
             locale: ['angular'],
-            route: ['bootstrap', 'animate', 'locale']
+            route: ['bootstrap', 'animate', 'locale'],
+            router: ['auth']
         }
     });
 
