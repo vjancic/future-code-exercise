@@ -132,7 +132,7 @@ function login(userId, callback) {
             }
 
             // update the token
-            token.token = generateToken();
+            token.token = newToken;
             token.save();
         });
     });
