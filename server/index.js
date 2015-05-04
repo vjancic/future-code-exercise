@@ -40,7 +40,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', express.static(__dirname + '/../client/'));
 
-app.post('/ad', routes.saveAd);
+app.post('/ad/:token', routes.saveAd);
 app.post('/authenticate', routes.authenticate);
 app.post('/register', routes.register);
 app.get('/ad', routes.getAll);

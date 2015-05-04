@@ -4,9 +4,8 @@
 var db = require('./db.js'),
     auth = require('./auth.js');
 
-// TODO: verify ad!!!!! DO NOT USE THIS!!!!!
 function saveAd(req, res) {
-    db.saveAd(req.body, function (err, id) {
+    db.saveAd(req.body, req.params.token, function (err, id) {
         if (err) {
             res.sendStatus(500);
         } else {
