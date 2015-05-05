@@ -28,11 +28,14 @@ function saveAd(ad, token, projectionFunction) {
     data.body = ad.body;
     data.location = ad.location;
     data.expiry = ad.expiry || 0;
-    data.expiry = new Date().getTime() + data.expiry * 24 * 60 * 60 * 1000;
-    data.date = new Date().getTime();
+	data.date = new Date().getTime();
     data.type = ad.type;
     data.tags = ad.tags || "";
     data.user = {};
+	
+	if (data.expiry > 0) {
+		data.expiry = data.date + data.expiry * 24 * 60 * 60 * 1000;
+	}
 
     Token.findOne({ token: token }, function (err, dbToken) {
         if (err) {
