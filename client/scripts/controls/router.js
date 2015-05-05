@@ -45,6 +45,22 @@
                 controller: 'postController'
             });
         });
+		
+		app.run(['$rootScope', '$state', 'auth', function($rootScope, $state, auth) {
+			$rootScope.header = {};
+
+			$rootScope.$on('$stateChangeStart', function(event, to, toParams, from, fromParams) {
+				var loggedin = auth.isLoggedIn();
+				var authorizationNeeded = to.name === 'post';
+				
+				$rootScope.header.isLoggedIn = loggedin;
+				
+				if(authorizationNeeded && !loggedin) {
+					event.preventDefault();
+					$state.go('login');
+				}
+			});
+		}]);
 
         angular.element(document).ready(function () {
             angular.bootstrap(document, ['app']);
