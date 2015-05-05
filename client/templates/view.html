@@ -1,23 +1,66 @@
 <style type="text/css" scoped="scoped">
-    ul li a {
+    ul li a, div span a {
         color: #FFD27F;
     }
 </style>
 
 <div class="panel-heading" id="space_header" />
-<div class="panel panel-default" data-ng-repeat="ad in data.ads">
+<div class="panel panel-default">
     <div class="panel-heading clearfix">
-		<h4 class="panel-title pull-left" style="padding-top: 7.5px;">[{{ ad.type | uppercase}}] {{ad.headline}}</h4>
+		<h4 class="panel-title pull-left" style="padding-top: 7.5px;">[{{ data.ad.type | uppercase}}] {{ data.ad.headline}}</h4>
+		<div class="btn-group pull-right">
+			<a data-ng-show="data.canLock" class="btn btn-default btn-sm" data-ng-click="data.submit('interest')">Show Interest</a>
+        	<a data-ng-show="data.canLock" class="btn btn-default btn-sm" style="font-size:18px;" data-ng-click="data.submit('lock')"><i class="glyphicon glyphicon-lock"></i></a>
+		</div>
 	</div>
     <div class="panel-body">
-        <h3>{{ad.body}}</h3>
+        <h3>{{data.ad.body}}</h3>
     </div>
     <!-- List group -->
     <ul class="list-group">
-        <li class="list-group-item"><b>Author: </b><a href="#/ads/user/{{ad.user.id}}">{{ad.user.name}}</a></li>
-        <li class="list-group-item"><b>Location: </b><a href="#/ads/location/{{ad.location}}">{{ad.location}}</a></li>
-        <li class="list-group-item"><b>Tags: </b><a href="#/ads/tag/{{ad.tags}}">{{ad.tags}}</a></li>
-        <li class="list-group-item" data-ng-if="ad.expiry === 0" ><b>Expires: </b>never</li>
-        <li class="list-group-item" data-ng-if="ad.expiry > 0"><b>Expires: </b>{{ad.expiry | date:'dd-MM-yyyy HH:mm:ss'}}</li>
+        <li class="list-group-item"><b>Author: </b><a href="#/ads/user/{{data.ad.user.id}}">{{data.ad.user.name}}</a></li>
+        <li class="list-group-item"><b>Location: </b><a href="#/ads/location/{{data.ad.location}}">{{data.ad.location}}</a></li>
+        <li class="list-group-item"><b>Tags: </b><a href="#/ads/tag/{{data.ad.tags}}">{{data.ad.tags}}</a></li>
+        <li class="list-group-item" data-ng-if="data.ad.expiry === 0" ><b>Expires: </b>never</li>
+        <li class="list-group-item" data-ng-if="data.ad.expiry > 0"><b>Expires: </b>{{data.ad.expiry | date:'dd-MM-yyyy HH:mm:ss'}}</li>
     </ul>
+</div>
+
+<div class="panel panel-default" data-ng-show="data.canLock">
+    <div class="panel-heading clearfix">
+		<h4 class="panel-title pull-left">Write a comment</h4>
+	</div>
+    <div class="panel-body">
+		<form id="dataform" class="form-horizontal" role="form" data-ng-submit="data.submit('comment')">
+			<textarea id="post-body" rows="7" class="form-control" name="body" data-ng-model="data.comment" placeholder="Comment" required></textarea>
+
+			<div style="margin-top:10px" class="form-group">
+			<!-- Button -->
+
+				<div class="col-sm-12 controls">
+					<button id="btn-post" type="submit" class="btn btn-success btn-small">Post</button>
+				</div>
+			</div>
+		</form>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+		<h4 class="panel-title pull-left">Activities</h4>
+	</div>
+    <div class="panel-body" data-ng-repeat="activity in data.ad.activity">
+        <div>
+            <span data-ng-if="activity.type === 'comment'"><a href="#/ads/user/{{data.ad.user.id}}">{{activity.user.name}}</a>
+                {{activity.comment}}
+            </span>
+            <span data-ng-if="activity.type === 'interest'"><a href="#/ads/user/{{data.ad.user.id}}">{{activity.user.name}}</a>
+                has shown interest in the ad!
+            </span>
+            <p/>
+            <div style="font-size: x-small;">
+                {{activity.date | date:'dd-MM-yyyy HH:mm:ss'}}
+            </div>
+        </div>
+    </div>
 </div>
