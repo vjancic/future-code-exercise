@@ -28,14 +28,14 @@ function saveAd(ad, token, projectionFunction) {
     data.body = ad.body;
     data.location = ad.location;
     data.expiry = ad.expiry || 0;
-	data.date = new Date().getTime();
+    data.date = new Date().getTime();
     data.type = ad.type;
     data.tags = ad.tags || "";
     data.user = {};
-	
-	if (data.expiry > 0) {
-		data.expiry = data.date + data.expiry * 24 * 60 * 60 * 1000;
-	}
+
+    if (data.expiry > 0) {
+        data.expiry = data.date + data.expiry * 24 * 60 * 60 * 1000;
+    }
 
     Token.findOne({ token: token }, function (err, dbToken) {
         if (err) {
@@ -60,6 +60,74 @@ function saveAd(ad, token, projectionFunction) {
                     }
 
                     projectionFunction(err, newAd._id);
+                });
+            });
+        }
+    });
+}
+
+function saveActivity(activity, adId, token, projectionFunction) {
+    if (activity instanceof Function) {
+        throw new Error("No activity given!");
+    }
+
+    if (!(projectionFunction instanceof Function)) {
+        throw new Error("No callback given!");
+    }
+
+    if (Object.prototype.toString.call(activity) !== "[object Object]") {
+        throw new Error("Ad is not an object!");
+    }
+
+    var data = {};
+    data.comment = activity.comment;
+    data.type = activity.type;
+    data.date = new Date().getTime();
+    data.user = {};
+
+    Token.findOne({ token: token }, function (err, dbToken) {
+        if (err) {
+            projectionFunction(err, null);
+            return;
+        }
+
+        if (dbToken) {
+            UserDb.findOne({ _id: mongoose.Types.ObjectId(dbToken.userId) }, function (err, user) {
+                if (err) {
+                    projectionFunction(err, null);
+                    return;
+                }
+
+                data.user.id = user._id;
+                data.user.name = user.name;
+
+                AdDB.find({ _id: mongoose.Types.ObjectId(adId) }, function (err, ad) {
+                    if (err) {
+                        // TODO: better error loging!!!
+                        console.error(err);
+                    }
+
+                    if (ad.length) {
+                        if (data.type !== 'lock') {
+                            ad[0].activity.push(data);
+                        }
+
+                        if (data.type === 'lock' && String(data.user.id) === ad[0].user.id) {
+                            console.log('in here!!');
+                            ad[0].expiry = new Date().getTime() - 1000;
+                        }
+
+                        ad[0].save(function (err, newAd) {
+                            if (err) {
+                                // TODO: better error loging!!!
+                                console.error(err);
+                            }
+
+                            projectionFunction(err, [newAd]);
+                        });
+                    } else {
+                        projectionFunction(err, ad);
+                    }
                 });
             });
         }
@@ -185,6 +253,7 @@ function getById(id, projectionFunction) {
 }
 
 module.exports.saveAd = saveAd;
+module.exports.saveActivity = saveActivity;
 module.exports.removeAd = removeAd;
 module.exports.getAll = getAll;
 module.exports.getByUser = getByUser;

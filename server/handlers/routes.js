@@ -14,6 +14,16 @@ function saveAd(req, res) {
     });
 }
 
+function saveActivity(req, res) {
+    db.saveActivity(req.body, req.params.adId, req.params.token, function (err, ad) {
+        if (err) {
+            res.sendStatus(500);
+        } else {
+            res.send(ad);
+        }
+    });
+}
+
 function removeAd(req, res) {
     db.removeAd(req.body.id, function (err) {
         if (err) {
@@ -103,6 +113,7 @@ function register(req, res) {
 }
 
 module.exports.saveAd = saveAd;
+module.exports.saveActivity = saveActivity;
 module.exports.removeAd = removeAd;
 module.exports.getAll = getAll;
 module.exports.getByUser = getByUser;
