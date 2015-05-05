@@ -1,6 +1,12 @@
 /*jslint node: true, nomen: true*/
 
 var mongoose = require('mongoose'),
+    activity = new mongoose.Schema({
+        type: String,
+        comment: String,
+        date: Number,
+        user: { id: String, name: String }
+    }),
     schema =  new mongoose.Schema({
         user: { id: String, name: String },
         headline: String,
@@ -9,7 +15,8 @@ var mongoose = require('mongoose'),
         expiry: Number,
         date: Number,
         type: String,
-        tags: String
+        tags: String,
+        activity: [activity]
     });
 
 module.exports = mongoose.model('Ad', schema);
